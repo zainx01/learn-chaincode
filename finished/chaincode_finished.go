@@ -19,8 +19,9 @@ package main
 import (
 	"errors"
 	"fmt"
-
+	"crypto/sha256"
 	"github.com/hyperledger/fabric/core/chaincode/shim"
+	"io"
 )
 
 // SimpleChaincode example simple Chaincode implementation
@@ -57,6 +58,8 @@ func (t *SimpleChaincode) Invoke(stub shim.ChaincodeStubInterface, function stri
 		return t.Init(stub, "init", args)
 	} else if function == "write" {
 		return t.write(stub, args)
+	} else if function == "write2" {
+		return t.write(stub, args)
 	}
 	fmt.Println("invoke did not find func: " + function)
 
@@ -70,7 +73,9 @@ func (t *SimpleChaincode) Query(stub shim.ChaincodeStubInterface, function strin
 	// Handle different functions
 	if function == "read" { //read a variable
 		return t.read(stub, args)
-	}
+	} //else if function == "read2" {
+	//	return t.read2(stub,args)
+	//}
 	fmt.Println("query did not find func: " + function)
 
 	return nil, errors.New("Received unknown function query: " + function)
@@ -112,4 +117,27 @@ func (t *SimpleChaincode) read(stub shim.ChaincodeStubInterface, args []string) 
 	}
 
 	return valAsbytes, nil
+}
+
+//read2
+func (t *SimpleChaincode) write2(stub shim.ChaincodeStubInterface, args []string) ([]byte, error) {
+	//var  key string
+	//var jsonResp string
+	//var err error
+
+	if len(args) != 1 {
+		return nil, errors.New("Incorrect number of arguments. Expecting name of the key to query")
+	}
+
+	//key = args[0]
+	//valAsbytes, err := stub.GetState(key)
+	//if err != nil {
+	//	jsonResp = ""
+	//	return nil, errors.New(jsonResp)
+	//}
+	var zain string = "zain the man"
+	h256 := sha256.New()
+	io.WriteString(h256, zain)
+	//byteArray := []byte(zain)
+	return []byte(h256.Sum(nil)), nil
 }
